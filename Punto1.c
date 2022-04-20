@@ -10,6 +10,9 @@ struct Tarea {
 }typedef Tarea;
 
 
+Tarea* BuscarTarea(int ,struct Tarea** , struct Tarea**, int , int );
+
+
 
 int main(){
     srand(time(NULL));
@@ -17,6 +20,7 @@ int main(){
     int cantidadT;
     int j=0;
     int z=0;
+    int id;
     printf("Cuantas tarea desea ingresar?\n");
     scanf("%i",&cantidadT);
     Tareas = (Tarea **)malloc(cantidadT * sizeof(Tarea *));
@@ -111,6 +115,18 @@ int main(){
         
         
     }
+    printf("Ingrese el ID para buscar una tarea\n");
+    scanf("%i",&id);
+    if (BuscarTarea(id,TareasNListas , TareasListas , z , j) == NULL)
+    {
+        printf("La tarea no se encontro o  no existe\n");
+    }else
+    {
+        printf("La tareas es: \n");
+        puts(BuscarTarea(id,TareasNListas , TareasListas , z , j )->Descripcion);
+    }
+    
+    
     
     
     
@@ -122,4 +138,48 @@ int main(){
 
 
     return 0;
+}
+Tarea* BuscarTarea(int ID ,struct Tarea** TareasNListas , struct Tarea** TareasListas , int z, int j ){
+    for (int i = 0; i < z; i++)
+    {
+        if(TareasNListas[i] == NULL)
+        {
+            
+        }else
+        {
+            if (TareasNListas[i]->TareaID == ID)
+            {
+                return TareasNListas[i];
+            }
+            
+
+        }
+        
+    }
+    for (int i = 0; i < j; i++)
+    {
+         if(TareasListas[i] == NULL)
+        {
+            
+        }else
+        {
+            if (TareasListas[i]->TareaID == ID)
+            {
+                return TareasListas[i];
+            }
+            
+
+        }
+        
+        
+    }
+    return NULL;
+
+    
+    
+
+
+
+
+
 }
