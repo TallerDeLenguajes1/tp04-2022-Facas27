@@ -10,6 +10,9 @@ struct Tarea {
 }typedef Tarea;
 
 
+Tarea* BuscarTarea(char [], struct Tarea**, struct Tarea** , int , int);
+
+
 
 int main(){
     srand(time(NULL));
@@ -17,6 +20,7 @@ int main(){
     int cantidadT;
     int j=0;
     int z=0;
+    char palabra[10];
     printf("Cuantas tarea desea ingresar?\n");
     scanf("%i",&cantidadT);
     Tareas = (Tarea **)malloc(cantidadT * sizeof(Tarea *));
@@ -115,11 +119,67 @@ int main(){
     
     
     
+    
 
 
 
 
+    
+    
+    
+    
+    
+    printf("Ingrese la palabra a buscar en la descripcion\n");
+    fflush(stdin);
+    gets(palabra);
+    if (BuscarTarea(palabra , TareasNListas , TareasListas, z , j) == NULL)
+    {
+        printf("La Tarea no se encontro o no existe\n");
+    }else
+    {
+        printf("La tarea se encontro y es:\n");
+        puts(BuscarTarea(palabra , TareasNListas , TareasListas, z , j)->Descripcion);
+    }
+    
+    
 
 
     return 0;
+}
+Tarea* BuscarTarea(char palabrea[], struct Tarea** TareasNListas, struct Tarea**TareasListas , int z, int j){
+    for (int i = 0; i < z; i++)
+    {
+        if (TareasNListas[i] == NULL)
+        {
+            /* code */
+        }else
+        {
+            if (strstr(TareasNListas[i]->Descripcion,palabrea) != NULL)
+            {
+                return TareasNListas[i];
+            }
+            
+        }
+        
+        
+    }
+     for (int i = 0; i < j; i++)
+    {
+        if (TareasListas[i] == NULL)
+        {
+            /* code */
+        }else
+        {
+            if (strstr(TareasListas[i]->Descripcion,palabrea) != NULL)
+            {
+                return TareasListas[i];
+            }
+            
+        }
+        
+        
+    }
+    return NULL;
+    
+
 }
