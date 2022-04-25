@@ -8,16 +8,20 @@ struct Tarea {
     char *Descripcion; //
     int Duracion; // entre 10 – 100
 }typedef Tarea;
+struct Nodo{
+    Tarea T;
+    struct Nodo *Siguiente;
+}typedef Nodo;
 
 
-Tarea* BuscarPorID(int ,struct Tarea** , struct Tarea**, int , int );
-Tarea* BuscarPalabra(char [], struct Tarea**, struct Tarea** , int , int);
+Nodo * CrearNodo(Nodo *, Tarea  );
+Nodo * BuscarPorID(int ,Nodo * , Nodo *, int , int );
+Nodo * BuscarPalabra(char [], Nodo *, Nodo* , int , int);
 
 
 
 int main(){
     srand(time(NULL));
-    Tarea **Tareas, **TareasListas, **TareasNListas ;
     int cantidadT;
     int j=0;
     int z=0;
@@ -25,74 +29,100 @@ int main(){
     char palabra[20];
     printf("Cuantas tarea desea ingresar?\n");
     scanf("%i",&cantidadT);
-    Tareas = (Tarea **)malloc(cantidadT * sizeof(Tarea *));
+    Nodo * TareasAHacer;
+    TareasAHacer = NULL;
     for (int i = 0; i < cantidadT; i++)
     {
-        Tareas[i]  = (Tarea *)malloc(sizeof(Tarea)); 
-        Tareas[i]->TareaID = i+1;
-        Tareas[i]->Descripcion = (char *)malloc(500);
+        Tarea Tareas;
+        
+       Tareas.TareaID = i+1;
+        Tareas.Descripcion = (char *)malloc(500);
         printf("Haga la descripcion a la tarea \n");
         fflush(stdin);
-        gets(Tareas[i]->Descripcion);
+        gets(Tareas.Descripcion);
         fflush(stdin);
-        Tareas[i]->Duracion = rand()%91 + 10;
-    }
-    TareasListas = (Tarea **)malloc(cantidadT * sizeof(Tarea *));
-    TareasNListas = (Tarea **)malloc(cantidadT * sizeof(Tarea *));
+        Tareas.Duracion = rand()%91 + 10;
+        TareasAHacer  = CrearNodo(TareasAHacer , Tareas);
 
-    for (int i = 0; i < cantidadT; i++)
-    {
-        
-        TareasListas[i] = NULL;
     }
-    for (int i = 0; i < cantidadT; i++)
-    {
-        
-        TareasNListas[i] = NULL;
-    }
+     Nodo *Tareaslistas, *TareasNlistas;
+     Tareaslistas = NULL;
+     TareasNlistas = NULL;
+   
+    
     printf("Lista de Tareas \n");
     for (int i = 0; i < cantidadT; i++)
     {
-        printf("El id de la tarea es : %d \n", Tareas[i]->TareaID);
+        printf("El id de la tarea es : %d \n", TareasAHacer->T.TareaID);
         fflush(stdin);
         printf("La descripcion de la tarea es: \n");
         fflush(stdin);
-        puts(Tareas[i]->Descripcion);
+        puts(TareasAHacer->T.Descripcion);
         fflush(stdin);
-        printf("La duracion es de %d \n", Tareas[i]->Duracion);
+        printf("La duracion es de %d \n", TareasAHacer->T.Duracion);
         char opc;
         
         printf("La tarea esta completada? Si esta completada ingrese: Y(si) o N(No)\n");
         scanf("%c",&opc);
         if (opc == 'Y')
         {
-            TareasListas[j] = Tareas[i];
-            Tareas[i] = NULL;
+            Tareaslistas  = CrearNodo(Tareaslistas , TareasAHacer->T);
+            
             j++;
         }else
         {
-            TareasNListas[z] = Tareas[i];
-            Tareas[i] = NULL;
+            TareasNlistas = CrearNodo(TareasNlistas , TareasAHacer->T);
             z++;
         }
+        
+        TareasAHacer = TareasAHacer->Siguiente;
+     
         
         
 
     }
+    printf("Ingrese el ID para buscar una tarea\n");
+    scanf("%i",&id);
+    if (BuscarPorID(id,TareasNlistas , Tareaslistas , z , j) == NULL)
+    {
+        printf("La tarea no se encontro o  no existe\n");
+    }else
+    {
+        printf("La tareas es: \n");
+        puts(BuscarPorID(id,TareasNlistas , Tareaslistas , z , j )->T.Descripcion);
+    }
+
+    printf("Ingrese la palabra a buscar en la descripcion\n");
+    fflush(stdin);
+    gets(palabra);
+    fflush(stdin);
+    if (BuscarPalabra(palabra , TareasNlistas , Tareaslistas, z , j) == NULL)
+    {
+        printf("La Tarea no se encontro o no existe\n");
+     }else
+     {
+        printf("La tarea se encontro y es:\n");
+        puts(BuscarPalabra(palabra , TareasNlistas , Tareaslistas, z , j)->T.Descripcion);
+     }
     printf("Mostraremos cada una de las tareas realizadas \n");
     for (int i = 0; i < j; i++)
     {
-        if (TareasListas[i] == NULL)
+        if (Tareaslistas == NULL)
         {
-            /* code */
+            printf("La lista esta vacia \n");
         }else
         {
-            printf("El id de la tarea es : %d \n", TareasListas[i]->TareaID);
-            printf("La descripcion de la tarea es: \n");
+            while (Tareaslistas != NULL)
+            {
+                printf("El id de la tarea es : %d \n", Tareaslistas->T.TareaID);
+                printf("La descripcion de la tarea es: \n");
        
-            puts(TareasListas[i]->Descripcion);
+                puts(Tareaslistas->T.Descripcion);
        
-            printf("La duracion es de %d \n", TareasListas[i]->Duracion);
+                printf("La duracion es de %d \n", Tareaslistas->T.Duracion);
+                Tareaslistas = Tareaslistas->Siguiente;
+            }
+            
         }
         
         
@@ -101,44 +131,29 @@ int main(){
     printf("Mostraremos cada una de las tareas NO realizadas \n");
     for (int i = 0; i < z; i++)
     {
-        if (TareasNListas[i] == NULL)
+        if (TareasNlistas == NULL)
         {
-            /* code */
+            printf("La lista esta vacia \n");
         }else
         {
-            printf("El id de la tarea es : %d \n", TareasNListas[i]->TareaID);
-            printf("La descripcion de la tarea es: \n");
+            while (TareasNlistas != NULL)
+            {
+                printf("El id de la tarea es : %d \n", TareasNlistas->T.TareaID);
+                printf("La descripcion de la tarea es: \n");
+       
+                puts(TareasNlistas->T.Descripcion);
+       
+                printf("La duracion es de %d \n", TareasNlistas->T.Duracion);
+
+                TareasNlistas = TareasNlistas->Siguiente;
+            }
             
-            puts(TareasNListas[i]->Descripcion);
-        
-            printf("La duracion es de %d \n", TareasNListas[i]->Duracion);
         }
         
         
         
     }
-    printf("Ingrese el ID para buscar una tarea\n");
-    scanf("%i",&id);
-    if (BuscarPorID(id,TareasNListas , TareasListas , z , j) == NULL)
-    {
-        printf("La tarea no se encontro o  no existe\n");
-    }else
-    {
-        printf("La tareas es: \n");
-        puts(BuscarPorID(id,TareasNListas , TareasListas , z , j )->Descripcion);
-    }
-
-    printf("Ingrese la palabra a buscar en la descripcion\n");
-    fflush(stdin);
-    gets(palabra);
-    if (BuscarPalabra(palabra , TareasNListas , TareasListas, z , j) == NULL)
-    {
-        printf("La Tarea no se encontro o no existe\n");
-     }else
-     {
-        printf("La tarea se encontro y es:\n");
-        puts(BuscarPalabra(palabra , TareasNListas , TareasListas, z , j)->Descripcion);
-     }
+    
     
     
     
@@ -153,18 +168,22 @@ int main(){
 
     return 0;
 }
-Tarea* BuscarPorID(int ID ,struct Tarea** TareasNListas , struct Tarea** TareasListas , int z, int j ){
+Nodo *  BuscarPorID(int ID ,Nodo * TareasNlistas , Nodo * Tareaslistas , int z, int j ){
     for (int i = 0; i < z; i++)
     {
-        if(TareasNListas[i] == NULL)
+        if(TareasNlistas == NULL)
         {
             
         }else
         {
-            if (TareasNListas[i]->TareaID == ID)
+            if (TareasNlistas->T.TareaID == ID)
             {
-                return TareasNListas[i];
+                return TareasNlistas;
+            }else
+            {
+                TareasNlistas = TareasNlistas->Siguiente;
             }
+            
             
 
         }
@@ -172,35 +191,47 @@ Tarea* BuscarPorID(int ID ,struct Tarea** TareasNListas , struct Tarea** TareasL
     }
     for (int i = 0; i < j; i++)
     {
-         if(TareasListas[i] == NULL)
+         if(Tareaslistas == NULL)
         {
             
         }else
         {
-            if (TareasListas[i]->TareaID == ID)
+            if (Tareaslistas->T.TareaID == ID)
             {
-                return TareasListas[i];
+                return Tareaslistas;
+            }else
+            {
+                Tareaslistas = Tareaslistas->Siguiente;
             }
-            
-
         }
+            
         
         
     }
     return NULL;
 }
-Tarea* BuscarPalabra(char palabrea[], struct Tarea** TareasNListas, struct Tarea**TareasListas , int z, int j){
+
+Nodo* BuscarPalabra(char palabrea[],Nodo* TareasNlistas, Nodo * Tareaslistas , int z, int j){
         for (int i = 0; i < z; i++)
     {
-            if (TareasNListas[i] == NULL)
+            if (TareasNlistas == NULL)
             {
                 /* code */
             }else
             {
-            if (strstr(TareasNListas[i]->Descripcion,palabrea) != NULL)
+                while (TareasNlistas != NULL)
                 {
-                    return TareasNListas[i];
+                        if (strstr(TareasNlistas->T.Descripcion,palabrea) != NULL)
+                    {
+                        return TareasNlistas;
+                    }else
+                    {
+                        TareasNlistas = TareasNlistas->Siguiente;
+                    }
+                    
                 }
+                
+            
                 
             }
             
@@ -208,21 +239,35 @@ Tarea* BuscarPalabra(char palabrea[], struct Tarea** TareasNListas, struct Tarea
         }
         for (int i = 0; i < j; i++)
         {
-            if (TareasListas[i] == NULL)
+            if (Tareaslistas == NULL)
             {
                 /* code */
             }else
             {
-                if (strstr(TareasListas[i]->Descripcion,palabrea) != NULL)
+                while (Tareaslistas != NULL)
                 {
-                    return TareasListas[i];
+                        if (strstr(Tareaslistas->T.Descripcion,palabrea) != NULL)
+                    {
+                        return Tareaslistas;
+                    }else
+                    {
+                        Tareaslistas = Tareaslistas->Siguiente;
+                    }
+                    
                 }
-                
-            }
             
             
+        }
         }
       return NULL;
         
 
+    }
+    Nodo * CrearNodo(Nodo *cabeza, Tarea deber){
+        Nodo* nuevoNodo;
+        nuevoNodo = (Nodo *)malloc(sizeof(Nodo));
+        nuevoNodo->T = deber;
+        nuevoNodo->Siguiente = cabeza;
+        cabeza  = nuevoNodo;
+        return cabeza;
     }
